@@ -1,0 +1,73 @@
+from __future__ import print_function
+
+import argparse
+import pickle # for handling the new data source
+from datetime import datetime # for filename conventions
+import numpy as np
+from tensorflow.python.lib.io import file_io # for better file I/O
+import sys
+import tensorflow as tf
+print(tf.__version__)
+
+batch_size = 1024
+num_classes = 10
+
+def train_model(train_file='data/mnist.pkl',job_dir='./tmp/mnist_mlp', num_steps = 1, lr=0.1, **args):
+	logs_path = job_dir + '/logs/' + str(datetime.now().isoformat())
+	print('Using logs_path located at {}'.format(logs_path))
+	lr=float(lr)
+	print(type(lr))
+	# Reading in the pickle file. Pickle works differently with Python 2 vs 3
+	f = file_io.FileIO(train_file, mode='rb')
+	data = pickle.load(f, encoding='bytes')	
+	# the data, shuffled and split between train and test sets
+	(x_train, y_train), (x_test, y_test) = data
+	x_train = x_train.reshape(60000, 784)
+	x_test = x_test.reshape(10000, 784)
+	y_train = y_train.astype(np.int32)
+	y_test = y_test.astype(np.int32)
+	train_input_fn = tf.estimator.inputs.numpy_input_fn(
+		x={"x2": np.array(x_train)},
+		y=np.array(y_train),
+		num_epochs=None,
+		batch_size=1024,
+		shuffle=True)
+	test_input_fn = tf.estimator.inputs.numpy_input_fn(
+		x={"x2": np.array(x_test)},
+		y=np.array(y_test),
+		num_epochs=1,
+		shuffle=False)
+	feature_x = tf.feature_column.numeric_column("x2", shape=(784))
+	feature_columns = [feature_x]
+	num_hidden_units = [1000]
+	model = tf.estimator.DNNClassifier(feature_columns=feature_columns,
+                                   hidden_units=num_hidden_units,
+                                   activation_fn=tf.nn.relu,
+                                   n_classes=num_classes,
+								   optimizer=tf.train.AdagradOptimizer(learning_rate = lr))
+	model.train(input_fn=train_input_fn, steps=num_steps)   
+	result = model.evaluate(input_fn=test_input_fn)
+	print('Test loss:', result['average_loss'])
+	print('Test accuracy:', result['accuracy'])
+	
+if __name__ == '__main__':
+	# Parse the input arguments for common Cloud ML Engine options
+	parser = argparse.ArgumentParser()
+	parser.add_argument(
+	  '--train-file',
+	  help='Cloud Storage bucket or local path to training data')
+	parser.add_argument(
+	  '--job-dir',
+	  help='Cloud storage bucket to export the model and store temp files')
+	parser.add_argument(
+	  '--num-steps',
+	  help='number of steps')
+	parser.add_argument(
+	  '--lr',
+	  help='learning rate')  
+	
+	args = parser.parse_args()
+	arguments = args.__dict__
+	train_model(**arguments)
+			
+	

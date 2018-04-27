@@ -1,0 +1,28 @@
+﻿<html>
+<script>
+ 
+ function translateText()
+ {
+ var textInput= document.getElementById("input").value;
+ var xhr = new XMLHttpRequest();
+xhr.open('GET', "https://us-central1-translateapp-63605.cloudfunctions.net/translateMessage?text="+textInput, true);
+xhr.send();
+ 
+xhr.onreadystatechange = processRequest;
+function processRequest(e) {
+
+ if (xhr.readyState == 4) {
+        var response = JSON.parse(xhr.responseText);       
+		document.getElementById("output").innerHTML=response;
+    }
+}
+ }
+
+</script>
+<body>
+<label>Enter Input Text</label>
+<input id="input" type="text-area"></input>
+<button onclick="translateText()" id="btnTrans">Translate</button>
+<label id="output"></label>
+</body>
+</html>

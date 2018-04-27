@@ -1,0 +1,20 @@
+trainingInput:
+  pythonVersion: "3.5"
+  scaleTier: CUSTOM
+  masterType: standard_gpu
+  hyperparameters:
+    goal: MAXIMIZE
+    hyperparameterMetricTag: accuracy
+    maxTrials: 4
+    maxParallelTrials: 1
+    params:
+      - parameterName: num-steps
+        type: INTEGER
+        minValue: 100
+        maxValue: 1000
+        scaleType: UNIT_LINEAR_SCALE
+      - parameterName: lr
+        type: DOUBLE
+        minValue: 0.00001
+        maxValue: 0.1
+        scaleType: UNIT_LOG_SCALE
