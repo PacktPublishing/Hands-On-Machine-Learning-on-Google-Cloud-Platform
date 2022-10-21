@@ -31,3 +31,7 @@ enable our readers to easily understand the code and readily use it in different
 
 * [Hands-On Deep Learning with PyTorch](https://www.packtpub.com/big-data-and-business-intelligence/hands-deep-learning-pytorch?utm_source=github&utm_medium=repository&utm_campaign=9781788834131)
 
+### Download a free PDF
+
+ <i>If you have already purchased a print or Kindle version of this book, you can get a DRM-free PDF version at no cost.<br>Simply click on the link to download a free PDF copy of this book.</i>
+<p align="center"> <a href="https://packt.link/free-ebook/9781788393485">https://packt.link/free-ebook/9781788393485 </a> </p>
